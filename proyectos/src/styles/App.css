@@ -35,6 +35,13 @@ body {
   text-decoration: none;
 }
 
+.botonIdioma {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-size: inherit;
+}
+
 .footer{
   background-color:#00618b;
   margin-top: auto;
@@ -67,6 +74,68 @@ body {
   transition: all .3s ease-in-out;
   padding: 1rem;
   margin: 2rem;
+}
+
+.abp {
+  margin-bottom: 3rem;
+}
+
+.abp-titulo {
+  color: #1450b0;
+  font-weight: 800;
+  font-size: 1.9rem;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.abp-intro {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.abp-paso {
+  height: 100%;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  color: #111;
+}
+
+.abp-paso p {
+  margin-bottom: 0.5rem;
+}
+
+.abp-paso-titulo {
+  font-family: "Catamaran", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.abp-paso-lista {
+  list-style: none;
+  padding: 0;
+}
+
+.abp-paso-lista li::before {
+  content: "– ";
+}
+
+.abp-paso-1 { background-color: #6d93d0; }
+.abp-paso-2 { background-color: #8faadc; }
+.abp-paso-3 { background-color: #b4c7e7; }
+.abp-paso-4 { background-color: #dae3f3; }
+
+.abp-subtitulo {
+  color: #1450b0;
+  font-size: 1.15rem;
+  text-align: center;
+  margin: 1.5rem 0 1rem;
+}
+
+.abp-beneficios {
+  padding-left: 2rem;
 }
 
 .modal-body a {

@@ -3,15 +3,16 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
 import { saveProyectos } from '../services/servProyectos'
 import { useNavigate } from 'react-router-dom';
+import { useIdioma } from './idioma/IdiomaContext';
 
-const renderCheckboxes = (name, options, formik) => {
+const renderCheckboxes = (name, options, formik, tr) => {
     return options.map((option) => (
         <Form.Check
             key={option}
             type="checkbox"
             value={option}
             name={name}
-            label={option}
+            label={tr(option)}
             checked={formik.values[name].includes(option)}
             onChange={(e) => {
                 formik.setFieldValue(
@@ -26,6 +27,7 @@ const renderCheckboxes = (name, options, formik) => {
 };
 
 function Secundaria() {
+    const { tr } = useIdioma();
 
     const allowedImageExtensions = ['jpg', 'jpeg', 'png', 'webp'];
     const allowedDocumentExtensions = ['pdf'];
@@ -142,7 +144,7 @@ function Secundaria() {
 
         const fileExtension = file.name.split('.').pop().toLowerCase();
         if (!allowedDocumentExtensions.includes(fileExtension)) {
-            alert('Por favor, selecciona un archivo PDF.');
+            alert(tr("Por favor, selecciona un archivo PDF."));
             event.target.value = null;
             return;
         }
@@ -156,7 +158,7 @@ function Secundaria() {
 
         const fileExtension = file.name.split('.').pop().toLowerCase();
         if (!allowedImageExtensions.includes(fileExtension)) {
-            alert('Por favor, selecciona un archivo de imagen válido (jpg, jpeg, png, webp).');
+            alert(tr("Por favor, selecciona un archivo de imagen válido (jpg, jpeg, png, webp)."));
             event.target.value = null;
             return;
         }
@@ -181,18 +183,17 @@ function Secundaria() {
         <Container fluid style={{ maxWidth: '1400px' }}>
             <Row className="mx-5">
                 <Col className=" justify-content-center">
-                    <h3 style={{ color: "#d8972f", marginBottom: "1rem" }}>Registro de Proyectos - Nivel Secundario</h3>
-                    <p>Los proyectos que se registren en este formulario formarán parte del "Currículum vinculante de proyectos" del Colegio Pestalozzi.
-                        En caso de tener alguna consulta, podés acercarte al referente del foco proyectos de tu nivel:<br /></p>
-                    <p><span style={{ fontWeight: "600" }}>Nivel Secundario:</span> Luciano Prandi <br /></p>
+                    <h3 style={{ color: "#d8972f", marginBottom: "1rem" }}>{tr("Registro de Proyectos - Nivel Secundario")}</h3>
+                    <p>{tr("Los proyectos que se registren en este formulario formarán parte del \"Currículum vinculante de proyectos\" del Colegio Pestalozzi. En caso de tener alguna consulta, podés acercarte al referente del foco proyectos de tu nivel:")}<br /></p>
+                    <p><span style={{ fontWeight: "600" }}>{tr("Nivel Secundario:")}</span> Luciano Prandi <br /></p>
 
-                    <p style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>¡Muchas gracias por tu colaboración!</p>
+                    <p style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("¡Muchas gracias por tu colaboración!")}</p>
                 </Col>
             </Row>
             <Row className="formCarga">
                 <Col>
                     <Form onSubmit={formik.handleSubmit}>
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Nombre del proyecto</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Nombre del proyecto")}</Form.Label>
                         <Form.Control
                             type="text"
                             id="nombre"
@@ -200,30 +201,26 @@ function Secundaria() {
                             value={formik.values.nombre}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            Con este nombre se presentará el proyecto y se podrá también buscar en el repositorio.
-                        </Form.Text>
+                        <Form.Text>{tr("Con este nombre se presentará el proyecto y se podrá también buscar en el repositorio.")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Imagen de presentación</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Imagen de presentación")}</Form.Label>
                         <Form.Control
                             type="file"
                             id="imagen"
                             name="imagen"
                             onChange={handleImagenChange}
                         />
-                        <Form.Text>
-                        Seleccioná un archivo en formato JPG, JPEG, PNG o WEBP
-                        </Form.Text>
+                        <Form.Text>{tr("Seleccioná un archivo en formato JPG, JPEG, PNG o WEBP")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Años</Form.Label>
-                        {renderCheckboxes("anho", ["Primer año", "Segundo año", "Tercer año", "Cuarto año", "Quinto año", "Sexto año"], formik)}
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Años")}</Form.Label>
+                        {renderCheckboxes("anho", ["Primer año", "Segundo año", "Tercer año", "Cuarto año", "Quinto año", "Sexto año"], formik, tr)}
 
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Nivel involucrado</Form.Label>
-                        {renderCheckboxes("nivelInvolucrado", ["Inicial", "Primaria"], formik)}
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Nivel involucrado")}</Form.Label>
+                        {renderCheckboxes("nivelInvolucrado", ["Inicial", "Primaria"], formik, tr)}
 
                         <Form.Control
                             type="text"
@@ -232,12 +229,10 @@ function Secundaria() {
                             value={formik.values.otroNivel}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            Por favor, ingresá que grado(s) o año(s) está(n) involucrado(s) en el proyecto
-                        </Form.Text>
+                        <Form.Text>{tr("Por favor, ingresá que grado(s) o año(s) está(n) involucrado(s) en el proyecto")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Objetivo(s) general(es)</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Objetivo(s) general(es)")}</Form.Label>
                         <Form.Control
                             type="text"
                             id="objetivoGeneral"
@@ -245,12 +240,10 @@ function Secundaria() {
                             onChange={formik.handleChange}
                         />
 
-                        <Form.Text>
-                            ¿Cuál es el objetivo global para este proyecto?  (Se refiere al meta-objetivo, a lo que el proyecto por sí solo no puede llegar, pero contribuirá. Es recomendable que sea redactado en una sola oración y no cuente con más de dos renglones de extensión. Es general y poco específico).
-                        </Form.Text>
+                        <Form.Text>{tr("¿Cuál es el objetivo global para este proyecto? (Se refiere al meta-objetivo, a lo que el proyecto por sí solo no puede llegar, pero contribuirá. Es recomendable que sea redactado en una sola oración y no cuente con más de dos renglones de extensión. Es general y poco específico).")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Descripción</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Descripción")}</Form.Label>
                         <Form.Control
                             as="textarea"
                             id="descripcion"
@@ -258,12 +251,10 @@ function Secundaria() {
                             value={formik.values.descripcion}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            Describí el proyecto lo más detallado posible en cuanto a cómo surgió, a que objetivos de aprendizaje responde, el porqué de la temática elegida.
-                        </Form.Text>
+                        <Form.Text>{tr("Describí el proyecto lo más detallado posible en cuanto a cómo surgió, a que objetivos de aprendizaje responde, el porqué de la temática elegida.")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Docente referente</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Docente referente")}</Form.Label>
                         <Form.Control
                             type="text"
                             id="docenteReferente"
@@ -272,13 +263,11 @@ function Secundaria() {
                             onChange={formik.handleChange}
                         />
 
-                        <Form.Text>
-                            Es interesante saber quién desarrollo y llevó a cabo el proyecto para lograr intercambio de experiencias e ideas.
-                        </Form.Text>
+                        <Form.Text>{tr("Es interesante saber quién desarrollo y llevó a cabo el proyecto para lograr intercambio de experiencias e ideas.")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Materias involucradas en el proyecto</Form.Label>
-                        {renderCheckboxes("materias", materiasOptions, formik)}
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Materias involucradas en el proyecto")}</Form.Label>
+                        {renderCheckboxes("materias", materiasOptions, formik, tr)}
 
                         <Form.Control
                             type="text"
@@ -287,12 +276,10 @@ function Secundaria() {
                             value={formik.values.otroAreas}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            Otro área involucrada que no figura en la lista...
-                        </Form.Text>
+                        <Form.Text>{tr("Otro área involucrada que no figura en la lista...")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Contenidos de articulación</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Contenidos de articulación")}</Form.Label>
                         <Form.Control
                             as="textarea"
                             id="contenidosArticulacion"
@@ -300,12 +287,10 @@ function Secundaria() {
                             value={formik.values.contenidosArticulacion}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            ¿Qué actividad(es) se realiz(ó)aron en otra(s) área(s) para contribuir al proyecto?.
-                        </Form.Text>
+                        <Form.Text>{tr("¿Qué actividad(es) se realiz(ó)aron en otra(s) área(s) para contribuir al proyecto?.")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Evaluación</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Evaluación")}</Form.Label>
                         <Form.Control
                             as="textarea"
                             id="evaluacion"
@@ -313,12 +298,10 @@ function Secundaria() {
                             value={formik.values.evaluacion}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            ¿Qué estrategias de evaluación se utilizarán para recoger información válida y confiable sobre el progreso de los alumnos?
-                        </Form.Text>
+                        <Form.Text>{tr("¿Qué estrategias de evaluación se utilizarán para recoger información válida y confiable sobre el progreso de los alumnos?")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Materiales</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Materiales")}</Form.Label>
                         <Form.Control
                             type="file"
                             id="materiales"
@@ -326,9 +309,7 @@ function Secundaria() {
                             multiple
                             onChange={handleMaterialesChange}
                         />
-                        <Form.Text>
-                            Selecciona los materiales necesarios para el proyecto.
-                        </Form.Text>
+                        <Form.Text>{tr("Selecciona los materiales necesarios para el proyecto.")}</Form.Text>
 
                         <Form.Control className='mt-3'
                             type="text"
@@ -337,13 +318,11 @@ function Secundaria() {
                             value={formik.values.otrosMateriales}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            Acá podés agregar links o comentarios.
-                        </Form.Text>
+                        <Form.Text>{tr("Acá podés agregar links o comentarios.")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Cronograma</Form.Label>
-                        {renderCheckboxes("cronograma", cronogramaOptions, formik)}
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Cronograma")}</Form.Label>
+                        {renderCheckboxes("cronograma", cronogramaOptions, formik, tr)}
 
                         <Form.Control
                             type="text"
@@ -352,24 +331,20 @@ function Secundaria() {
                             value={formik.values.otroCronograma}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            Otro área involucrada que no figura en la lista...
-                        </Form.Text>
+                        <Form.Text>{tr("Otro área involucrada que no figura en la lista...")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Planificación</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Planificación")}</Form.Label>
                         <Form.Control
                             type="file"
                             id="planificacion"
                             name="planificacion"
                             onChange={handlePlanificacionChange}
                         />
-                        <Form.Text>
-                            Seleccioná un archivo en formato PDF
-                        </Form.Text>
+                        <Form.Text>{tr("Seleccioná un archivo en formato PDF")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Producciones</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Producciones")}</Form.Label>
                         <Form.Control
                             type="file"
                             id="producciones"
@@ -377,9 +352,7 @@ function Secundaria() {
                             multiple
                             onChange={handleProduccionesChange}
                         />
-                        <Form.Text>
-                            Cargá productos finales de tu proyecto.
-                        </Form.Text>
+                        <Form.Text>{tr("Cargá productos finales de tu proyecto.")}</Form.Text>
 
                         <Form.Control className='mt-3'
                             type="text"
@@ -388,12 +361,10 @@ function Secundaria() {
                             value={formik.values.otrosProducciones}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            Acá podés agregar links o comentarios.
-                        </Form.Text>
+                        <Form.Text>{tr("Acá podés agregar links o comentarios.")}</Form.Text>
                         <hr />
 
-                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>Comentarios</Form.Label>
+                        <Form.Label style={{ fontSize: "1.2rem", fontWeight: "600", color: "#00618b" }}>{tr("Comentarios")}</Form.Label>
                         <Form.Control
                             as="textarea"
                             id="comentarios"
@@ -401,30 +372,24 @@ function Secundaria() {
                             value={formik.values.comentarios}
                             onChange={formik.handleChange}
                         />
-                        <Form.Text>
-                            Escribe aquí comentarios adicionales sobre el proyecto.
-                        </Form.Text>
+                        <Form.Text>{tr("Escribe aquí comentarios adicionales sobre el proyecto.")}</Form.Text>
                         <hr />
 
-                        <Button variant="primary" type="submit" onClick={formik.handleSubmit} className='pb-2'>
-                            Enviar
-                        </Button>
+                        <Button variant="primary" type="submit" onClick={formik.handleSubmit} className='pb-2'>{tr("Enviar")}</Button>
 
                         <Modal show={showModal} onHide={handleCloseModal}>
                             <Modal.Header closeButton>
-                                <Modal.Title>Formulario enviado</Modal.Title>
+                                <Modal.Title>{tr("Formulario enviado")}</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
-                                <p>El proyecto se guardó con éxito. ¡Muchas gracias!</p>
+                                <p>{tr("El proyecto se guardó con éxito. ¡Muchas gracias!")}</p>
                             </Modal.Body>
                             <Modal.Footer>
-                                <Button variant="primary" onClick={handleCloseModal}>
-                                    Aceptar
-                                </Button>
+                                <Button variant="primary" onClick={handleCloseModal}>{tr("Aceptar")}</Button>
                             </Modal.Footer>
                         </Modal>
                         <hr />
-                        <p style={{ fontSize: "1.8rem", fontWeight: "600", color: "#00618b", marginTop: "2rem" }}>¡Muchas gracias por tu participación!</p>
+                        <p style={{ fontSize: "1.8rem", fontWeight: "600", color: "#00618b", marginTop: "2rem" }}>{tr("¡Muchas gracias por tu participación!")}</p>
 
                     </Form>
                 </Col>

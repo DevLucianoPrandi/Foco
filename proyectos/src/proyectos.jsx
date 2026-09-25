@@ -1,48 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Container, Row, Col, Button, CardImg } from 'react-bootstrap';
-import { getProyectos } from '../services/servProyectos';
+import { Card, Container, Row, Col, Button } from 'react-bootstrap';
+import { getProyectos, urlArchivo, usarImagenPorDefecto } from '../services/servProyectos';
 import { Link } from 'react-router-dom';
+import { useIdioma } from './idioma/IdiomaContext';
 
 const Proyectos = () => {
+  const { tr } = useIdioma();
   const [proyectos, setProyectos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function cargaProyectos() {
-      const response = await getProyectos();
-
-      if (response.status === 200) {
+      try {
+        const response = await getProyectos();
         setProyectos(response.data.allProyectos);
+      } catch (e) {
+        setError(true);
+      } finally {
+        setLoading(false);
       }
     }
     cargaProyectos();
   }, []);
 
+  const traducirLista = (lista) => (lista || []).map((item) => tr(item)).join(', ');
+
   const renderProyectos = (nivel) => {
     const filteredProyectos = proyectos.filter((proyecto) => proyecto.nivel === nivel);
 
     if (filteredProyectos.length === 0) {
-      return <p>No hay proyectos disponibles</p>;
+      return <p>{tr('No hay proyectos disponibles')}</p>;
     }
 
-    const baseUrl = import.meta.env.VITE_APP_PUBLIC_STORAGE;
-
     return filteredProyectos.map((proyecto) => {
-      const imageUrl = proyecto.imagen && proyecto.imagen.length > 0
-        ? baseUrl + proyecto.imagen[0]
-        : baseUrl + "imagen/default.jpg";
+      const imageUrl = urlArchivo(
+        proyecto.imagen && proyecto.imagen.length > 0
+          ? proyecto.imagen[0]
+          : "imagen/default.jpg"
+      );
 
       let etiqueta = '';
       let contenidoEtiqueta = '';
 
       if (proyecto.nivel === 'Inicial') {
         etiqueta = 'Sala(s)';
-        contenidoEtiqueta = (proyecto.salas || []).length > 0 ? (proyecto.salas || []).join(', ') : '';
+        contenidoEtiqueta = traducirLista(proyecto.salas);
       } else if (proyecto.nivel === 'Primaria') {
         etiqueta = 'Grado(s)';
-        contenidoEtiqueta = (proyecto.grado || []).length > 0 ? (proyecto.grado || []).join(', ') : '';
+        contenidoEtiqueta = traducirLista(proyecto.grado);
       } else if (proyecto.nivel === 'Secundaria') {
         etiqueta = 'Año(s)';
-        contenidoEtiqueta = (proyecto.anho || []).length > 0 ? (proyecto.anho || []).join(', ') : '';
+        contenidoEtiqueta = traducirLista(proyecto.anho);
       }
 
       return (
@@ -55,27 +64,28 @@ const Proyectos = () => {
                 variant="top"
                 src={imageUrl}
                 alt={proyecto.nombre}
+                onError={usarImagenPorDefecto}
                 className="img-fluid mb-3"
               />
               <Card.Text>{proyecto.descripcion}</Card.Text>
-              <Card.Title>{etiqueta}</Card.Title><p>{contenidoEtiqueta || '--'}</p>
-        
+              <Card.Title>{tr(etiqueta)}</Card.Title><p>{contenidoEtiqueta || '--'}</p>
+
         {proyecto.nivel === 'Inicial' && (
           <>
-            <Card.Title>Área(s)</Card.Title>
-            <p>{(proyecto.areas || []).join(', ') || '--'}</p>
+            <Card.Title>{tr('Área(s)')}</Card.Title>
+            <p>{traducirLista(proyecto.areas) || '--'}</p>
           </>
         )}
 
         {(proyecto.nivel === 'Primaria' || proyecto.nivel === 'Secundaria') && (
           <>
-            <Card.Title>Materia(s)</Card.Title>
-            <p>{(proyecto.materias || []).join(', ') || '--'}</p>
+            <Card.Title>{tr('Materia(s)')}</Card.Title>
+            <p>{traducirLista(proyecto.materias) || '--'}</p>
           </>
         )}
 
               <Button className="mt-3" variant="primary" as={Link} to={`../mostrarProyectos/${proyecto._id}`}>
-                Ver Proyecto
+                {tr('Ver Proyecto')}
               </Button>
             </Card.Body>
           </Card>
@@ -84,24 +94,32 @@ const Proyectos = () => {
     });
   };
 
+  if (loading) {
+    return <Container fluid style={{ maxWidth: '1400px' }}><p className="m-4">{tr('Cargando proyectos...')}</p></Container>;
+  }
+
+  if (error) {
+    return <Container fluid style={{ maxWidth: '1400px' }}><p className="m-4 text-danger">{tr('No se pudieron cargar los proyectos. Por favor, intentá de nuevo más tarde.')}</p></Container>;
+  }
+
   return (
     <Container fluid style={{ maxWidth: '1400px' }}>
       <Row className="tarjetas pb-3">
-        <h2 className="titulo">Proyectos Inicial</h2>
+        <h2 className="titulo">{tr('Proyectos Inicial')}</h2>
         <hr />
         {renderProyectos('Inicial')}
         <hr />
       </Row>
 
       <Row className="tarjetas pb-3">
-        <h2 className="titulo">Proyectos Primaria</h2>
+        <h2 className="titulo">{tr('Proyectos Primaria')}</h2>
         <hr />
         {renderProyectos('Primaria')}
         <hr />
       </Row>
 
       <Row className="tarjetas pb-3">
-        <h2 className="titulo">Proyectos Secundaria</h2>
+        <h2 className="titulo">{tr('Proyectos Secundaria')}</h2>
         <hr />
         {renderProyectos('Secundaria')}
       </Row>

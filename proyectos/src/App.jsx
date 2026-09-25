@@ -11,9 +11,11 @@ import { Secundaria } from './secundaria'
 import { Proyectos } from './proyectos'
 import { Contacto } from './contacto'
 import { Mostrar } from './muestreo/mostrarProyectos'
+import { IdiomaProvider } from './idioma/IdiomaContext'
 
 function App() {
   return (
+    <IdiomaProvider>
     <BrowserRouter>
       <NavBar />
       <Routes>
@@ -28,6 +30,7 @@ function App() {
       </Routes>
       <Footer />
     </BrowserRouter>
+    </IdiomaProvider>
   )
 }
 
