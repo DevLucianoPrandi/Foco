@@ -1,0 +1,79 @@
+@import url("https://fonts.googleapis.com/css2?family=Catamaran:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+  font-family: "Catamaran", sans-serif;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+h3, h1{
+  font-family: 'Noto Serif', sans-serif;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.barraSup {
+  color: dimgrey;
+  font-weight: 400;
+  text-decoration: none;
+  padding-left: 2rem;
+}
+
+.barraNav {
+  background-color: #00618b;
+  line-height: 2.5rem;
+}
+
+.link {
+  color: white;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.footer{
+  background-color:#00618b;
+  margin-top: auto;
+}
+
+.fotohome{
+  border-radius: 0.5rem;
+  box-shadow: 0px 3px 7px rgba(0,0,0,.2);
+  transition: all .3s ease-in-out;
+  padding-inline: 3rem;
+  padding-block: 1rem;
+  padding-bottom: 8rem;
+  margin: 2rem;
+}
+
+.integrante{
+  width: 10rem;
+  border: 0.25rem black;
+  border-radius: 0.25rem;
+  box-shadow: 0px 3px 7px rgba(0,0,0,.2);
+  transition: all .3s ease-in-out;
+  padding: 1rem;
+  margin: 2rem;
+}
+
+.formCarga{
+  width: auto;
+  border: solid 0.25rem dimgrey;
+  border-radius: 0.5rem;
+  transition: all .3s ease-in-out;
+  padding: 1rem;
+  margin: 2rem;
+}
+
+.modal-body a {
+  text-decoration: none;
+  color: #00618b;
+}
+
+.modal-body a:hover {
+  color: dimgrey;
+}
