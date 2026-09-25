@@ -3,105 +3,70 @@ const path = require("path");
 const rootPath = path.join(__dirname, "..");
 const publicFolderPath = path.join(rootPath, "public");
 
+const CAMPOS_TEXTO = [
+  "nombre",
+  "nivel",
+  "salas",
+  "grado",
+  "anho",
+  "otroNivel",
+  "nivelInvolucrado",
+  "objetivoGeneral",
+  "descripcion",
+  "docenteReferente",
+  "areas",
+  "otroAreas",
+  "cronograma",
+  "otroCronograma",
+  "materias",
+  "otrosMaterias",
+  "contenidosArticulacion",
+  "otrosMateriales",
+  "secuenciaActidvidades",
+  "horasPlanificacion",
+  "otrosHorasPlanificacion",
+  "evaluacion",
+  "otrosProducciones",
+  "comentarios",
+];
+
+const CAMPOS_ARCHIVO = ["imagen", "materiales", "planificacion", "producciones"];
+
+const modifyFilePaths = (filePaths) =>
+  filePaths.map((filePath) => {
+    const relativePath = path.relative(publicFolderPath, filePath);
+    const correctedPath = relativePath.replace(/\\/g, "/");
+    return correctedPath.startsWith("/") ? correctedPath : "/" + correctedPath;
+  });
+
+const rutasSubidas = (files, campo) =>
+  files && files[campo] ? modifyFilePaths(files[campo].map((file) => file.path)) : [];
+
 async function addProyectos(req, res) {
-  let proyectoInstance;
   try {
-    const {
-      nombre,
-      nivel,
-      salas,
-      grado,
-      anho,
-      otroNivel,
-      nivelInvolucrado,
-      objetivoGeneral,
-      descripcion,
-      docenteReferente,
-      areas,
-      otroAreas,
-      cronograma,
-      otroCronograma,
-      materias,
-      otrosMaterias,
-      contenidosArticulacion,
-      otrosMateriales,
-      secuenciaActidvidades,
-      horasPlanificacion,
-      otrosHorasPlanificacion,
-      evaluacion,
-      otrosProducciones,
-      comentarios,
-    } = req.body;
-
-    const materialesPath = req.files["materiales"]
-      ? req.files["materiales"].map((file) => file.path)
-      : [];
-    const produccionesPath = req.files["producciones"]
-      ? req.files["producciones"].map((file) => file.path)
-      : [];
-    const planificacionPath = req.files["planificacion"]
-      ? req.files["planificacion"].map((file) => file.path)
-      : [];
-      const imagenPath = req.files["imagen"]
-      ? req.files["imagen"].map((file) => file.path)
-      : [];
-
-
-    console.log("materialesPath:", materialesPath);
-    console.log("produccionesPath:", produccionesPath);
-    console.log("planificacionPath:", planificacionPath);
-
-    const modifyFilePaths = (filePaths) => {
-      return filePaths.map((filePath) => {
-        const relativePath = path.relative(publicFolderPath, filePath);
-        const correctedPath = relativePath.replace(/\\/g, "/");
-        return correctedPath.startsWith("/")
-          ? correctedPath
-          : "/" + correctedPath;
-      });
-    };
-
-    proyectoInstance = new proyectos({
-      nombre,
-      imagen: modifyFilePaths(imagenPath),
-      nivel,
-      salas,
-      grado,
-      anho,
-      otroNivel,
-      nivelInvolucrado,
-      objetivoGeneral,
-      descripcion,
-      docenteReferente,
-      areas,
-      otroAreas,
-      cronograma,
-      otroCronograma,
-      materias,
-      otrosMaterias,
-      contenidosArticulacion,
-      materiales: modifyFilePaths(materialesPath),
-      otrosMateriales,
-      planificacion: modifyFilePaths(planificacionPath),
-      secuenciaActidvidades,
-      horasPlanificacion,
-      otrosHorasPlanificacion,
-      evaluacion,
-      producciones: modifyFilePaths(produccionesPath),
-      otrosProducciones,
-      comentarios,
+    const datos = {};
+    CAMPOS_TEXTO.forEach((campo) => {
+      datos[campo] = req.body[campo];
+    });
+    CAMPOS_ARCHIVO.forEach((campo) => {
+      datos[campo] = rutasSubidas(req.files, campo);
     });
 
-    const proyectoGuardado = await proyectoInstance.save();
+    const proyectoGuardado = await new proyectos(datos).save();
 
     res.status(201).send({ proyectoGuardado });
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
 }
+
 async function getProyectos(req, res) {
-  const allProyectos = await proyectos.find().lean().exec();
-  res.status(200).send({ allProyectos });
+  try {
+    const allProyectos = await proyectos.find().lean().exec();
+    res.status(200).send({ allProyectos });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 }
 
 async function getProyecto(req, res) {
@@ -123,79 +88,23 @@ async function getProyecto(req, res) {
 async function updateProyecto(req, res) {
   try {
     const { id } = req.params;
-    const {
-      nombre,
-      nivel,
-      sala,
-      grado,
-      anho,
-      otroNivel,
-      nivelInvolucrado,
-      objetivoGeneral,
-      descripcion,
-      docenteReferente,
-      areas,
-      otroAreas,
-      cronograma,
-      otroCronograma,
-      materias,
-      otrosMaterias,
-      contenidosArticulacion,
-      materiales,
-      otrosMateriales,
-      planificacion,
-      secuenciaActidvidades,
-      horasPlanificacion,
-      otrosHorasPlanificacion,
-      evaluacion,
-      producciones,
-      otrosProducciones,
-      comentarios,
-    } = req.body;
 
-    const materialesPath = req.files["materiales"]
-      ? req.files["materiales"].map((file) => file.path)
-      : [];
-    const produccionesPath = req.files["producciones"]
-      ? req.files["producciones"].map((file) => file.path)
-      : [];
-    const planificacionPath = req.files["planificacion"]
-      ? req.files["planificacion"].map((file) => file.path)
-      : [];
+    const cambios = {};
+    CAMPOS_TEXTO.forEach((campo) => {
+      if (req.body[campo] !== undefined) cambios[campo] = req.body[campo];
+    });
+    CAMPOS_ARCHIVO.forEach((campo) => {
+      const rutas = rutasSubidas(req.files, campo);
+      if (rutas.length > 0) cambios[campo] = rutas;
+    });
 
-    const updatedProyecto = await proyectos.findByIdAndUpdate(
-      id,
-      {
-        nombre,
-        nivel,
-        sala,
-        grado,
-        anho,
-        otroNivel,
-        nivelInvolucrado,
-        objetivoGeneral,
-        descripcion,
-        docenteReferente,
-        areas,
-        otroAreas,
-        cronograma,
-        otroCronograma,
-        materias,
-        otrosMaterias,
-        contenidosArticulacion,
-        materiales: materialesPath,
-        otrosMateriales,
-        planificacion: planificacionPath,
-        secuenciaActidvidades,
-        horasPlanificacion,
-        otrosHorasPlanificacion,
-        evaluacion,
-        producciones: produccionesPath,
-        otrosProducciones,
-        comentarios,
-      },
-      { new: true }
-    );
+    const updatedProyecto = await proyectos.findByIdAndUpdate(id, cambios, {
+      new: true,
+    });
+
+    if (!updatedProyecto) {
+      return res.status(404).send({ message: "Proyecto not found" });
+    }
 
     res.status(200).send({ updatedProyecto });
   } catch (error) {
@@ -208,6 +117,10 @@ async function deleteProyecto(req, res) {
     const { id } = req.params;
 
     const deletedProyecto = await proyectos.findByIdAndDelete(id);
+
+    if (!deletedProyecto) {
+      return res.status(404).send({ message: "Proyecto not found" });
+    }
 
     res.status(200).send({ deletedProyecto });
   } catch (error) {

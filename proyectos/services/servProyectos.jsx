@@ -1,53 +1,31 @@
 import axios from "axios";
 
 const baseUrl = import.meta.env.VITE_REACT_APP_BASE_URL;
+const storageUrl = import.meta.env.VITE_APP_PUBLIC_STORAGE || "";
 
-export async function getProyectos(formData) {
- try {
-    const response = await axios({
-      url: `${baseUrl}/proyectos/`,
-      method: "GET",
-      data: formData,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response;
- } catch (e) {
-    console.error(e);
-    throw e;
- }
+export function urlArchivo(ruta) {
+  return `${storageUrl.replace(/\/+$/, "")}/${String(ruta).replace(/^\/+/, "")}`;
+}
+
+export function usarImagenPorDefecto(event) {
+  const porDefecto = urlArchivo("imagen/default.jpg");
+  if (event.currentTarget.src !== porDefecto) {
+    event.currentTarget.src = porDefecto;
+  }
+}
+
+export async function getProyectos() {
+  return axios.get(`${baseUrl}/proyectos/`);
 }
 
 export async function getProyectoUnico(_id) {
-  try {
-     const response = await axios({
-       url: `${baseUrl}/proyectos/${_id}`,
-       method: "GET",
-       data: _id,
-       headers: {
-         "Content-Type": "multipart/form-data",
-       },
-     });
-     return response;
-  } catch (e) {
-     console.log(e);
-  }
- }
+  return axios.get(`${baseUrl}/proyectos/${_id}`);
+}
 
 export async function saveProyectos(datosProyecto) {
- try {
-    const response = await axios({
-      method: "POST",
-      url: `${baseUrl}/proyectos/`,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      data: datosProyecto,
-    });
-    return response;
- } catch (e) {
-    console.error(e);
-    throw e;
- }
+  return axios.post(`${baseUrl}/proyectos/`, datosProyecto, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 }

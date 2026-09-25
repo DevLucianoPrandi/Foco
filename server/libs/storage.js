@@ -22,7 +22,10 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage }).fields([
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 25 * 1024 * 1024 },
+}).fields([
   { name: 'materiales', maxCount: 10 },
   { name: 'producciones', maxCount: 10 },
   { name: 'planificacion', maxCount: 1 },

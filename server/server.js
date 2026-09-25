@@ -12,7 +12,7 @@ async function initApp(appConfig, dbConfig) {
     );
   } catch (e) {
     console.error(e);
-    process.exit(0);
+    process.exit(1);
   }
 }
 
